@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Provider.of<MainScreenController>(context,
                                 listen: false)
-                            .setSelectedIndex(1);
+                            .setSelectedIndex(2);
                         Navigator.pushNamed(context, MainScreen.routeName);
                       },
                       child: BaseText.S(
