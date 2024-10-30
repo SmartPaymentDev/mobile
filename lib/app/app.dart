@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ibnu_abbas/features/account/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/home/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/payment/pages/index/controller.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BillController()),
         ChangeNotifierProvider(create: (_) => PaymentController()),
         ChangeNotifierProvider(create: (_) => HomeController()),
+        ChangeNotifierProvider(create: (_) => AccountController()),
       ],
       child: MaterialApp(
         title: 'Nectar',

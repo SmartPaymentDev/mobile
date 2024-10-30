@@ -14,201 +14,208 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final String virtualAccountNumber = "7510 0112 3456 7890";
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AccountController>(context, listen: false).fetchData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AccountController(),
-      child: Consumer<AccountController>(builder: (context, controller, child) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: BaseText.L(
-              "Profil",
-              color: PreferenceColors.yellow,
-              fontWeight: FontWeight.w600,
-            ),
-            backgroundColor: PreferenceColors.purple,
-            elevation: 0,
+    final controller = Provider.of<AccountController>(context);
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: BaseText.L(
+          "Profil",
+          color: PreferenceColors.yellow,
+          fontWeight: FontWeight.w600,
+        ),
+        backgroundColor: PreferenceColors.purple,
+        elevation: 0,
+      ),
+      body: LayoutContainer(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: Dimensions.height(context) / 60,
+            horizontal: Dimensions.width(context) / 25,
           ),
-          body: LayoutContainer(
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                vertical: Dimensions.height(context) / 60,
-                horizontal: Dimensions.width(context) / 25,
-              ),
-              width: Dimensions.width(context),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+          width: Dimensions.width(context),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: PreferenceColors.purple,
+                    child: BaseText.L(
+                      controller.userName
+                          .split(' ')
+                          .map((word) =>
+                              word.isNotEmpty ? word[0].toUpperCase() : '')
+                          .join(''),
+                      color: PreferenceColors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  10.0.width,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: PreferenceColors.purple,
-                        child: BaseText.L(
-                          'H', // First letter of the user's name
-                          color: PreferenceColors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      BaseText.L(
+                        controller.userName,
+                        fontWeight: FontWeight.w500,
                       ),
-                      10.0.width,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      1.0.height,
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
                         children: [
-                          BaseText.L(
-                            'Hasan', // User name
-                            fontWeight: FontWeight.w500,
-                          ),
-                          1.0.height,
-                          BaseText.S("Kelompok A")
+                          BaseText.M("751001" + controller.noCust,
+                              fontWeight: FontWeight.w600),
+                          GestureDetector(
+                            onTap: () {
+                              Clipboard.setData(
+                                ClipboardData(
+                                  text: "751001" + controller.noCust,
+                                ),
+                              );
+                              _showTopNotification(
+                                context,
+                                'Nomor Virtual Account di salin!',
+                              );
+                            },
+                            child: Icon(
+                              color: PreferenceColors.black.shade300,
+                              Icons.copy,
+                              size: Dimensions.dp18,
+                            ),
+                          )
                         ],
                       )
                     ],
-                  ),
-                  20.0.height,
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: PreferenceColors.black.shade100, width: 1),
-                    ),
-                    width: Dimensions.width(context),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        BaseText.S("No. VA SPP"),
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 10,
-                          children: [
-                            BaseText.M("7510 0112 3456 7890",
-                                fontWeight: FontWeight.w600),
-                            GestureDetector(
-                              onTap: () {
-                                Clipboard.setData(
-                                  ClipboardData(
-                                    text: virtualAccountNumber,
-                                  ),
-                                );
-                                _showTopNotification(
-                                  context,
-                                  'Nomor Virtual Account di salin!',
-                                );
-                              },
-                              child: Icon(
-                                color: PreferenceColors.black.shade300,
-                                Icons.copy,
-                                size: Dimensions.dp18,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  15.0.height,
-                  Container(
-                      width: Dimensions.width(context),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: PreferenceColors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: PreferenceColors.black.shade100,
-                                  width: 1),
-                            ),
-                            width: Dimensions.width(context) / 2.25,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BaseText.M("Jenjang"),
-                                3.0.height,
-                                BaseText.M("SMA", fontWeight: FontWeight.w600),
-                                1.0.height,
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: PreferenceColors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: PreferenceColors.black.shade100,
-                                  width: 1),
-                            ),
-                            width: Dimensions.width(context) / 2.25,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BaseText.M("Kelas"),
-                                3.0.height,
-                                BaseText.M("1", fontWeight: FontWeight.w600),
-                                1.0.height,
-                              ],
-                            ),
-                          ),
-                        ],
-                      )),
-                  20.0.height,
-                  GestureDetector(
-                    onTap: () => {
-                      Navigator.pushNamed(context, ResetPassScreen.routeName)
-                    },
-                    child: Container(
-                      height: Dimensions.dp48,
-                      width: Dimensions.width(context),
-                      decoration: BoxDecoration(
-                        color: PreferenceColors.purple,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: BaseText.M(
-                          "Ganti Password",
-                          color: PreferenceColors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  10.0.height,
-                  GestureDetector(
-                    onTap: () => {
-                      Navigator.pushNamed(context, AuthLoginScreen.routeName)
-                    },
-                    child: Container(
-                      height: Dimensions.dp48,
-                      width: Dimensions.width(context),
-                      decoration: BoxDecoration(
-                        color: PreferenceColors.yellow,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: BaseText.M(
-                          "Keluar",
-                          color: PreferenceColors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  10.0.height,
+                  )
                 ],
               ),
-            ),
+              20.0.height,
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: PreferenceColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: PreferenceColors.black.shade100, width: 1),
+                ),
+                width: Dimensions.width(context),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    BaseText.M("Jenjang"),
+                    BaseText.M(
+                      controller.jenjang,
+                      fontWeight: FontWeight.w600,
+                    )
+                  ],
+                ),
+              ),
+              15.0.height,
+              Container(
+                  width: Dimensions.width(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: PreferenceColors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: PreferenceColors.black.shade100, width: 1),
+                        ),
+                        width: Dimensions.width(context) / 2.25,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BaseText.M("Kelompok"),
+                            3.0.height,
+                            BaseText.M(controller.kelompok,
+                                fontWeight: FontWeight.w600),
+                            1.0.height,
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: PreferenceColors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: PreferenceColors.black.shade100, width: 1),
+                        ),
+                        width: Dimensions.width(context) / 2.25,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BaseText.M("Kelas"),
+                            3.0.height,
+                            BaseText.M(controller.kelas,
+                                fontWeight: FontWeight.w600),
+                            1.0.height,
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+              20.0.height,
+              GestureDetector(
+                onTap: () =>
+                    {Navigator.pushNamed(context, ResetPassScreen.routeName)},
+                child: Container(
+                  height: Dimensions.dp48,
+                  width: Dimensions.width(context),
+                  decoration: BoxDecoration(
+                    color: PreferenceColors.purple,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: BaseText.M(
+                      "Ganti Password",
+                      color: PreferenceColors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              10.0.height,
+              GestureDetector(
+                onTap: () =>
+                    {Navigator.pushNamed(context, AuthLoginScreen.routeName)},
+                child: Container(
+                  height: Dimensions.dp48,
+                  width: Dimensions.width(context),
+                  decoration: BoxDecoration(
+                    color: PreferenceColors.yellow,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: BaseText.M(
+                      "Keluar",
+                      color: PreferenceColors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              10.0.height,
+            ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }
