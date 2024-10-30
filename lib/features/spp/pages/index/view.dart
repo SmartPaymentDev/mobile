@@ -44,10 +44,10 @@ class SppScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         BaseText.S(
-                          "Saldo SPP",
+                          "SALDO SAAT INI",
                           fontWeight: FontWeight.w500,
                         ),
-                        1.0.height,
+                        5.0.height,
                         BaseText(
                           text: "Rp80.000",
                           fontWeight: FontWeight.w600,
@@ -155,7 +155,7 @@ class SppScreen extends StatelessWidget {
                                                       BaseText.M(
                                                         "Petunjuk",
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                            FontWeight.w500,
                                                       ),
                                                       BaseText.S(
                                                           "1. Masuk ke akun rekening bank anda"),
@@ -198,7 +198,7 @@ class SppScreen extends StatelessWidget {
                                   ),
                                   6.0.height,
                                   BaseText.XS(
-                                    "Tambah Uang  ",
+                                    "Top Up",
                                     color: PreferenceColors.purple,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -227,7 +227,7 @@ class SppScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            BaseText.L("Pindahkan Uang",
+                                            BaseText.L("Pindahkan",
                                                 fontWeight: FontWeight.w600),
                                             20.0.height,
                                             Container(
@@ -252,9 +252,9 @@ class SppScreen extends StatelessWidget {
                                                     value: null,
                                                     items: [
                                                       DropdownMenuItem<String>(
-                                                        value: 'Saldo Saku',
-                                                        child:
-                                                            Text('Saldo Saku'),
+                                                        value: 'Kantor Saku',
+                                                        child: Text(
+                                                            'Kantong Saku'),
                                                       ),
                                                     ],
                                                     onChanged:
@@ -281,7 +281,7 @@ class SppScreen extends StatelessWidget {
                                                 ),
                                                 child: Center(
                                                   child: BaseText.M(
-                                                    "Pindahkan Uang",
+                                                    "Konfirmasi",
                                                     color:
                                                         PreferenceColors.white,
                                                     fontWeight: FontWeight.w500,
@@ -318,7 +318,7 @@ class SppScreen extends StatelessWidget {
                                   ),
                                   6.0.height,
                                   BaseText.XS(
-                                    "Pindahkan Uang",
+                                    "Pindahkan",
                                     color: PreferenceColors.purple,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -330,7 +330,7 @@ class SppScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  BaseText.S("Riwayat", fontWeight: FontWeight.w600),
+                  BaseText.M("Riwayat", fontWeight: FontWeight.w600),
                   5.0.height,
                   HistorySection()
                 ],
@@ -417,8 +417,8 @@ class HistorySection extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BaseText.M("Top Up", fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Jan 2024"),
+                      BaseText.M("CASHLESS 1 VA", fontWeight: FontWeight.w600),
+                      BaseText.XS("OCT 4, 2024"),
                     ],
                   ),
                 ],
@@ -465,256 +465,14 @@ class HistorySection extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BaseText.M("Pembayaran SPP", fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Mar 2024"),
+                      BaseText.M("CASHLESS 1 VA", fontWeight: FontWeight.w600),
+                      BaseText.XS("OCT 4, 2024"),
                     ],
                   ),
                 ],
               ),
               BaseText.M(
                 "-80.000",
-                fontWeight: FontWeight.w600,
-                color: PreferenceColors.red,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: Dimensions.width(context) / 1.1,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: PreferenceColors.white.shade600,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 15,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.red.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.north_west,
-                      size: Dimensions.dp20,
-                      color: PreferenceColors.red,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseText.M("Transfer ke Saku",
-                          fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Mar 2024"),
-                    ],
-                  ),
-                ],
-              ),
-              BaseText.M(
-                "-20.000",
-                fontWeight: FontWeight.w600,
-                color: PreferenceColors.red,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: Dimensions.width(context) / 1.1,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: PreferenceColors.white.shade600,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 15,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.green.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.south_east,
-                      size: Dimensions.dp20,
-                      color: PreferenceColors.green,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseText.M("Top Up", fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Jan 2024"),
-                    ],
-                  ),
-                ],
-              ),
-              BaseText.M(
-                "+150.000",
-                fontWeight: FontWeight.w600,
-                color: PreferenceColors.green,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: Dimensions.width(context) / 1.1,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: PreferenceColors.white.shade600,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 15,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.green.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.south_east,
-                      size: Dimensions.dp20,
-                      color: PreferenceColors.green,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseText.M("Top Up", fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Jan 2024"),
-                    ],
-                  ),
-                ],
-              ),
-              BaseText.M(
-                "+150.000",
-                fontWeight: FontWeight.w600,
-                color: PreferenceColors.green,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: Dimensions.width(context) / 1.1,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: PreferenceColors.white.shade600,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 15,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.red.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.north_west,
-                      size: Dimensions.dp20,
-                      color: PreferenceColors.red,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseText.M("Pembayaran SPP", fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Mar 2024"),
-                    ],
-                  ),
-                ],
-              ),
-              BaseText.M(
-                "-80.000",
-                fontWeight: FontWeight.w600,
-                color: PreferenceColors.red,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          width: Dimensions.width(context) / 1.1,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: PreferenceColors.white.shade600,
-                width: 1.0,
-              ),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 15,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: PreferenceColors.red.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.north_west,
-                      size: Dimensions.dp20,
-                      color: PreferenceColors.red,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseText.M("Transfer ke Saku",
-                          fontWeight: FontWeight.w600),
-                      BaseText.XS("29 Mar 2024"),
-                    ],
-                  ),
-                ],
-              ),
-              BaseText.M(
-                "-20.000",
                 fontWeight: FontWeight.w600,
                 color: PreferenceColors.red,
               ),

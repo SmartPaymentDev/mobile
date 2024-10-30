@@ -4,7 +4,6 @@ import 'package:ibnu_abbas/features/auth/auth.dart';
 import 'package:ibnu_abbas/features/reset-pass/pages/index/view.dart';
 import 'package:ibnu_abbas/features/saku/saku.dart';
 import 'package:ibnu_abbas/features/spp/spp.dart';
-import 'package:ibnu_abbas/features/tagihan/tagihan.dart';
 
 Route<dynamic> routes(RouteSettings settings) {
   WidgetBuilder builder;
@@ -21,9 +20,6 @@ Route<dynamic> routes(RouteSettings settings) {
       break;
     case SakuScreen.routeName:
       builder = (_) => SakuScreen();
-      break;
-    case TagihanScreen.routeName:
-      builder = (_) => TagihanScreen();
       break;
     case ResetPassScreen.routeName:
       builder = (_) => ResetPassScreen();

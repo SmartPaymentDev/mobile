@@ -7,8 +7,15 @@ class LayoutContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: child,
+    return Container(
+      width: double.infinity, // Ensure full width
+      child: SingleChildScrollView(
+        child: Column( // Wrap child in Column
+          children: [
+            child,
+          ],
+        ),
+      ),
     );
   }
 }

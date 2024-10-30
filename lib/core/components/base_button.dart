@@ -63,7 +63,7 @@ class BaseButton extends StatelessWidget {
         text: text,
         onPressed: onPressed,
         width: width,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         textColor: PreferenceColors.purple,
         borderColor: PreferenceColors.purple,
         isLoading: isLoading,
