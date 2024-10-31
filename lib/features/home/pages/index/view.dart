@@ -60,9 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
               SppSection(),
               15.0.height,
               SakuSection(),
-              15.0.height,
+              30.0.height,
               BaseText.M("Menu", fontWeight: FontWeight.w600),
-              10.0.height,
+              15.0.height,
               MenuSection(),
               30.0.height,
               if (bill.isNotEmpty) ...[
@@ -211,7 +211,7 @@ class SppSection extends StatelessWidget {
           ]),
           5.0.height,
           BaseButton.secondary(
-            text: "Lihat Transaksi",
+            text: "Transaksi",
             onPressed: () => Navigator.pushNamed(context, SppScreen.routeName),
             width: Dimensions.width(context),
           )
@@ -307,7 +307,7 @@ class SakuSection extends StatelessWidget {
           ]),
           5.0.height,
           BaseButton.primary(
-            text: "Lihat Transaksi",
+            text: "Transaksi",
             onPressed: () => Navigator.pushNamed(context, SakuScreen.routeName),
             width: Dimensions.width(context),
           )
