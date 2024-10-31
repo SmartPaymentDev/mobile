@@ -25,7 +25,6 @@ class _SakuScreenState extends State<SakuScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<SakuController>(context);
-    final virtualAccountNumber = controller.virtualAccountNumber;
     final TextEditingController _amountController = TextEditingController();
 
     return Scaffold(

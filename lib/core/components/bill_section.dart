@@ -22,12 +22,11 @@ class BillSection extends StatelessWidget {
 
   String formatCurrency(String amount) {
     try {
-      final doubleValue = double.parse(amount); 
-      final formatter = NumberFormat.currency(
-          locale: 'id_ID', symbol: 'Rp '); 
-      return formatter.format(doubleValue); 
+      final doubleValue = double.parse(amount);
+      final formatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ');
+      return formatter.format(doubleValue);
     } catch (e) {
-      return amount; 
+      return amount;
     }
   }
 
@@ -56,14 +55,22 @@ class BillSection extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Divider(color: PreferenceColors.black.shade100, thickness: 1),
+          if (paidSt == '1') ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BaseText.M("TGL BAYAR", fontWeight: FontWeight.w600),
+                BaseText.M(paiddt_actual),
+              ],
+            ),
+            Divider(color: PreferenceColors.black.shade100, thickness: 1),
+          ],
           const SizedBox(height: 5),
           BaseText.XS(
             "Detail Tagihan",
             color: PreferenceColors.black.shade600,
           ),
           const SizedBox(height: 5),
-
-          // Loop through bill details and render each description and amount
           ...(billDetails ?? []).map((bill) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
@@ -96,10 +103,22 @@ class BillSection extends StatelessWidget {
                 ],
               ),
               if (paidSt == '1') ...[
-                BaseText.L(
-                  "Lunas",
-                  color: PreferenceColors.purple,
-                  fontWeight: FontWeight.w600,
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    Icon(
+                      Icons.verified_outlined,
+                      size: 25,
+                      color: PreferenceColors.green,
+                    ),
+                    BaseText.L(
+                      "Lunas",
+                      color: PreferenceColors.green,
+                      fontWeight: FontWeight.w600,
+                    )
+                  ],
                 )
               ]
             ],

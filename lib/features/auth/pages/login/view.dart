@@ -41,7 +41,7 @@ class AuthLoginScreen extends StatelessWidget {
                     bottom: 0,
                     child: Container(
                       width: Dimensions.width(context),
-                      height: Dimensions.height(context) * 0.45,
+                      height: Dimensions.height(context) * 0.4,
                       decoration: BoxDecoration(
                         color: PreferenceColors.white,
                         borderRadius: BorderRadius.only(
@@ -103,7 +103,6 @@ class AuthLoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            10.0.height,
                           ],
                         ),
                       ),
