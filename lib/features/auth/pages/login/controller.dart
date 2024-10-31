@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:ibnu_abbas/features/main/main.dart';
+import 'package:ibnu_abbas/features/main/pages/index/controller.dart';
+import 'package:provider/provider.dart';
 
 class AuthLoginController extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -29,6 +31,8 @@ class AuthLoginController extends ChangeNotifier {
 
         await _storage.write(key: 'authToken', value: token);
 
+        Provider.of<MainScreenController>(context, listen: false)
+            .setSelectedIndex(0);
         Navigator.pushNamed(context, MainScreen.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

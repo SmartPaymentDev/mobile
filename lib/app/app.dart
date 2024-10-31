@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ibnu_abbas/features/account/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/home/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/payment/pages/index/controller.dart';
+import 'package:ibnu_abbas/features/reset-pass/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/saku/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/spp/pages/index/controller.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AccountController()),
         ChangeNotifierProvider(create: (_) => SppController()),
         ChangeNotifierProvider(create: (_) => SakuController()),
+        ChangeNotifierProvider(create: (_) => ResetPasssController()),
       ],
       child: MaterialApp(
         title: 'Nectar',

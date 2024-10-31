@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ibnu_abbas/core/core.dart';
 import 'package:ibnu_abbas/features/account/pages/index/controller.dart';
-import 'package:ibnu_abbas/features/auth/auth.dart';
 import 'package:ibnu_abbas/features/reset-pass/pages/index/view.dart';
 import 'package:provider/provider.dart';
 
@@ -172,44 +171,17 @@ class _AccountScreenState extends State<AccountScreen> {
                     ],
                   )),
               20.0.height,
-              GestureDetector(
-                onTap: () =>
-                    {Navigator.pushNamed(context, ResetPassScreen.routeName)},
-                child: Container(
-                  height: Dimensions.dp48,
-                  width: Dimensions.width(context),
-                  decoration: BoxDecoration(
-                    color: PreferenceColors.purple,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Center(
-                    child: BaseText.M(
-                      "Ganti Password",
-                      color: PreferenceColors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
+              BaseButton.primary(
+                text: "Ganti Password",
+                onPressed: () =>
+                    Navigator.pushNamed(context, ResetPassScreen.routeName),
+                width: double.infinity,
               ),
               10.0.height,
-              GestureDetector(
-                onTap: () =>
-                    {Navigator.pushNamed(context, AuthLoginScreen.routeName)},
-                child: Container(
-                  height: Dimensions.dp48,
-                  width: Dimensions.width(context),
-                  decoration: BoxDecoration(
-                    color: PreferenceColors.yellow,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Center(
-                    child: BaseText.M(
-                      "Keluar",
-                      color: PreferenceColors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
+              BaseButton.outlined(
+                text: "Keluar",
+                onPressed: () => controller.logout(context),
+                width: double.infinity,
               ),
               10.0.height,
             ],

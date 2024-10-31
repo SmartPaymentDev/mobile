@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ibnu_abbas/core/core.dart';
 import 'package:ibnu_abbas/features/auth/pages/login/view.dart';
-import 'package:ibnu_abbas/features/main/main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,10 +13,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToOnboarding();
+    _navigateTo();
   }
 
-  void _navigateToOnboarding() {
+  void _navigateTo() {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushNamedAndRemoveUntil(
         context,

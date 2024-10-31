@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:ibnu_abbas/features/auth/pages/login/view.dart';
 
 class AccountController extends ChangeNotifier {
   final FlutterSecureStorage storage = FlutterSecureStorage();
@@ -34,5 +35,10 @@ class AccountController extends ChangeNotifier {
       kelompok = data['data']['user']['desc_03'];
     }
     notifyListeners();
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await storage.delete(key: "authToken");
+    Navigator.pushNamed(context, AuthLoginScreen.routeName);
   }
 }
