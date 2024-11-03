@@ -7,6 +7,7 @@ import 'package:ibnu_abbas/features/main/pages/index/controller.dart';
 import 'package:ibnu_abbas/features/saku/saku.dart';
 import 'package:ibnu_abbas/features/spp/spp.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,12 +17,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final RefreshController _refreshController = RefreshController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<HomeController>(context, listen: false).fetchData();
+      _fetchData();
     });
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      await Provider.of<HomeController>(context, listen: false).fetchData();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      _refreshController.refreshFailed();
+    }
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,98 +63,105 @@ class _HomeScreenState extends State<HomeScreen> {
             };
           }).toList()
         : [];
+
     return Scaffold(
-        body: LayoutContainer(
-      child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: Dimensions.width(context) * 0.05),
-          width: Dimensions.width(context),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GreetingSection(),
-              10.0.height,
-              SppSection(),
-              15.0.height,
-              SakuSection(),
-              30.0.height,
-              BaseText.M("Menu", fontWeight: FontWeight.w600),
-              15.0.height,
-              MenuSection(),
-              30.0.height,
-              if (bill.isNotEmpty) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BaseText.M("Tagihan", fontWeight: FontWeight.w600),
-                    GestureDetector(
-                      onTap: () {
-                        Provider.of<MainScreenController>(context,
-                                listen: false)
-                            .setSelectedIndex(1);
-                        Navigator.pushNamed(context, MainScreen.routeName);
-                      },
-                      child: BaseText.S(
-                        "Lihat Semua",
-                        fontWeight: FontWeight.w600,
-                        color: PreferenceColors.purple,
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _fetchData,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: Dimensions.width(context) * 0.05),
+            width: Dimensions.width(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GreetingSection(),
+                10.0.height,
+                SppSection(),
+                15.0.height,
+                SakuSection(),
+                30.0.height,
+                BaseText.M("Menu", fontWeight: FontWeight.w600),
+                15.0.height,
+                MenuSection(),
+                30.0.height,
+                if (bill.isNotEmpty) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BaseText.M("Tagihan", fontWeight: FontWeight.w600),
+                      GestureDetector(
+                        onTap: () {
+                          Provider.of<MainScreenController>(context,
+                                  listen: false)
+                              .setSelectedIndex(1);
+                          Navigator.pushNamed(context, MainScreen.routeName);
+                        },
+                        child: BaseText.S(
+                          "Lihat Semua",
+                          fontWeight: FontWeight.w600,
+                          color: PreferenceColors.purple,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    BillSection(
-                      paidSt: bill['paidst'],
-                      paiddt_actual: bill['paiddt_actual'],
-                      month: bill['billnm'],
-                      period: bill['bta'],
-                      billDetails: billDetails,
-                      total: bill['billam'].toString(),
-                    )
-                  ],
-                ),
-              ],
-              if (payment.isNotEmpty) ...[
-                25.0.height,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BaseText.M("Pambayaran Terakhir",
-                        fontWeight: FontWeight.w600),
-                    GestureDetector(
-                      onTap: () {
-                        Provider.of<MainScreenController>(context,
-                                listen: false)
-                            .setSelectedIndex(2);
-                        Navigator.pushNamed(context, MainScreen.routeName);
-                      },
-                      child: BaseText.S(
-                        "Lihat Semua",
-                        fontWeight: FontWeight.w600,
-                        color: PreferenceColors.purple,
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      BillSection(
+                        paidSt: bill['paidst'],
+                        paiddt: bill['paiddt'],
+                        month: bill['billnm'],
+                        period: bill['bta'],
+                        billDetails: billDetails,
+                        total: bill['billam'].toString(),
+                      )
+                    ],
+                  ),
+                ],
+                if (payment.isNotEmpty) ...[
+                  25.0.height,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BaseText.M("Pambayaran Terakhir",
+                          fontWeight: FontWeight.w600),
+                      GestureDetector(
+                        onTap: () {
+                          Provider.of<MainScreenController>(context,
+                                  listen: false)
+                              .setSelectedIndex(2);
+                          Navigator.pushNamed(context, MainScreen.routeName);
+                        },
+                        child: BaseText.S(
+                          "Lihat Semua",
+                          fontWeight: FontWeight.w600,
+                          color: PreferenceColors.purple,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    BillSection(
-                      paidSt: payment['paidst'],
-                      paiddt_actual: payment['paiddt_actual'],
-                      month: payment['billnm'],
-                      period: payment['bta'],
-                      billDetails: paymentDetail,
-                      total: payment['billam'].toString(),
-                    )
-                  ],
-                ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      BillSection(
+                        paidSt: payment['paidst'],
+                        paiddt: payment['paiddt'],
+                        month: payment['billnm'],
+                        period: payment['bta'],
+                        billDetails: paymentDetail,
+                        total: payment['billam'].toString(),
+                      )
+                    ],
+                  ),
+                ],
+                15.0.height,
               ],
-              15.0.height,
-            ],
-          )),
-    ));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

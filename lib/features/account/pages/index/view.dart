@@ -74,13 +74,13 @@ class _AccountScreenState extends State<AccountScreen> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
                         children: [
-                          BaseText.M("751001" + controller.noCust,
+                          BaseText.M(controller.noCust,
                               fontWeight: FontWeight.w600),
                           GestureDetector(
                             onTap: () {
                               Clipboard.setData(
                                 ClipboardData(
-                                  text: "751001" + controller.noCust,
+                                  text: controller.noCust,
                                 ),
                               );
                               _showTopNotification(
@@ -140,9 +140,9 @@ class _AccountScreenState extends State<AccountScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            BaseText.M("Kelompok"),
+                            BaseText.M("Kelas"),
                             3.0.height,
-                            BaseText.M(controller.kelompok,
+                            BaseText.M(controller.kelas,
                                 fontWeight: FontWeight.w600),
                             1.0.height,
                           ],
@@ -160,9 +160,9 @@ class _AccountScreenState extends State<AccountScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            BaseText.M("Kelas"),
+                            BaseText.M("Kelompok"),
                             3.0.height,
-                            BaseText.M(controller.kelas,
+                            BaseText.M(controller.kelompok,
                                 fontWeight: FontWeight.w600),
                             1.0.height,
                           ],

@@ -17,7 +17,6 @@ class SppController extends ChangeNotifier {
   Future<void> fetchData() async {
     String? authToken = await storage.read(key: 'authToken');
     await fetchSppBalance(authToken);
-    await fetchSppHistory(authToken);
     await fetchUser(authToken);
   }
 
@@ -42,9 +41,12 @@ class SppController extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         await fetchData();
+        DateTime _startDate = DateTime.now().subtract(Duration(days: 30));
+        DateTime _endDate = DateTime.now();
+        await fetchSppHistory(startDate: _startDate, endDate: _endDate);
         return true;
       } else {
-      _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
+        _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
         return false;
       }
     } catch (e) {
@@ -106,20 +108,39 @@ class SppController extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchSppHistory(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/spp'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSppHistory({DateTime? startDate, DateTime? endDate}) async {
+    String? authToken = await storage.read(key: 'authToken');
+
+    final String? fromDate = startDate?.toIso8601String().split('T')[0];
+    final String? toDate = endDate?.toIso8601String().split('T')[0];
+
+    final Uri uri = Uri.parse('http://18.141.174.182/spp').replace(
+      queryParameters: {
+        if (fromDate != null) 'from': fromDate,
+        if (toDate != null) 'to': toDate,
       },
     );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      history = data['data']['transactions'] ?? [];
-    } else {
-      sppBalance = 'Rp0';
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        history = data['data']['transactions'] ?? [];
+      } else {
+        history = [];
+      }
+    } catch (e) {
+      print('Error fetching SPP history: $e');
+      history = [];
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> fetchUser(String? authToken) async {

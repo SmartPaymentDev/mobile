@@ -69,7 +69,7 @@ class BillScreenState extends State<BillScreen> {
 
                     return BillSection(
                       paidSt: bill['paidst'],
-                      paiddt_actual: bill['paiddt_actual'],
+                      paiddt: bill['paiddt'],
                       month: bill['billnm'],
                       period: bill['bta'],
                       billDetails: billDetails,

@@ -1,4 +1,4 @@
-package com.example.ibnu_abbas
+package com.example.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

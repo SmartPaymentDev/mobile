@@ -63,11 +63,8 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> fetchBills(String? authToken) async {
-    final now = DateTime.now();
-    final yearMonth = DateFormat('yyyyMM').format(now);
-
     final response = await http.get(
-      Uri.parse('http://18.141.174.182/bills?paid_st=0&yearmonth=$yearMonth'),
+      Uri.parse('http://18.141.174.182/bills?paid_st=0'),
       headers: {
         'Authorization': 'Bearer $authToken',
       },

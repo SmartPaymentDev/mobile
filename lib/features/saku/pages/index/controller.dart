@@ -18,13 +18,11 @@ class SakuController extends ChangeNotifier {
   Future<void> fetchData() async {
     String? authToken = await storage.read(key: 'authToken');
     await fetchSakuBalance(authToken);
-    await fetchSakuHistory(authToken);
     await fetchSppBalance(authToken);
     await fetchUser(authToken);
   }
 
-  Future<bool> topup(
-      BuildContext context, String amount) async {
+  Future<bool> topup(BuildContext context, String amount) async {
     if (amount.isEmpty) {
       _showTopNotification(context, "Mohon Isi Nominal.");
       return false;
@@ -44,9 +42,12 @@ class SakuController extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         await fetchData();
+        DateTime _startDate = DateTime.now().subtract(Duration(days: 30));
+        DateTime _endDate = DateTime.now();
+        await fetchSakuHistory(startDate: _startDate, endDate: _endDate);
         return true;
       } else {
-      _showTopNotification(context, "Top Up Gagal, Harap Coba Lagi Nanti");
+        _showTopNotification(context, "Top Up Gagal, Harap Coba Lagi Nanti");
         return false;
       }
     } catch (e) {
@@ -68,7 +69,8 @@ class SakuController extends ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      double saldoValue = data['data']['v_saldo_va_cashless']['saldo'].toDouble();
+      double saldoValue =
+          data['data']['v_saldo_va_cashless']['saldo'].toDouble();
       sakuBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
           .format(saldoValue);
     } else {
@@ -126,22 +128,41 @@ class SakuController extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchSakuHistory(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/saku'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSakuHistory(
+      {DateTime? startDate, DateTime? endDate}) async {
+    String? authToken = await storage.read(key: 'authToken');
+
+    final String? fromDate = startDate?.toIso8601String().split('T')[0];
+    final String? toDate = endDate?.toIso8601String().split('T')[0];
+
+    final Uri uri = Uri.parse('http://18.141.174.182/saku').replace(
+      queryParameters: {
+        if (fromDate != null) 'from': fromDate,
+        if (toDate != null) 'to': toDate,
       },
     );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      history = data['data']['transaction_details'] ?? [];
-    } else {
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        history = data['data']['transaction_details'] ?? [];
+      } else {
+        history = [];
+      }
+    } catch (e) {
+      print('Error fetching SPP history: $e');
       history = [];
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
-  
 
   Future<void> fetchUser(String? authToken) async {
     final response = await http.get(

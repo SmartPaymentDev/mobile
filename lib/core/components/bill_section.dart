@@ -8,7 +8,7 @@ class BillSection extends StatelessWidget {
   final List<dynamic>? billDetails;
   final String total;
   final String paidSt;
-  final String paiddt_actual;
+  final String paiddt;
 
   const BillSection({
     Key? key,
@@ -17,7 +17,7 @@ class BillSection extends StatelessWidget {
     required this.billDetails,
     required this.total,
     required this.paidSt,
-    required this.paiddt_actual,
+    required this.paiddt,
   }) : super(key: key);
 
   String formatCurrency(String amount) {
@@ -60,7 +60,7 @@ class BillSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 BaseText.M("TGL BAYAR", fontWeight: FontWeight.w600),
-                BaseText.M(paiddt_actual),
+                BaseText.M(paiddt),
               ],
             ),
             Divider(color: PreferenceColors.black.shade100, thickness: 1),
