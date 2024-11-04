@@ -11,7 +11,7 @@ class HomeController extends ChangeNotifier {
   String sppBalance = 'Rp0';
   String sakuBalance = 'Rp0';
   String userName = '...';
-  String noCust = '...';
+  String noVa = '...';
 
   Map<String, dynamic> bill = {};
   Map<String, dynamic> payment = {};
@@ -100,7 +100,7 @@ class HomeController extends ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       userName = data['data']['user']['nmcust'];
-      noCust = data['data']['user']['nocust'];
+      noVa = data['data']['user']['no_va'];
     }
     notifyListeners();
   }

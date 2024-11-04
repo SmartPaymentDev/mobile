@@ -208,13 +208,13 @@ class SppSection extends StatelessWidget {
                 6.0.height,
                 Row(
                   children: [
-                    BaseText.S("751001" + controller.noCust,
+                    BaseText.S(controller.noVa,
                         color: PreferenceColors.white),
                     8.0.width,
                     GestureDetector(
                       onTap: () {
                         Clipboard.setData(
-                            ClipboardData(text: "751001" + controller.noCust));
+                            ClipboardData(text: controller.noVa));
                         _showTopNotification(
                             context, "Nomor Virtual Account berhasil disalin");
                       },
@@ -304,13 +304,13 @@ class SakuSection extends StatelessWidget {
                 5.0.height,
                 Row(
                   children: [
-                    BaseText.S("751001" + controller.noCust,
+                    BaseText.S(controller.noVa,
                         color: PreferenceColors.black),
                     8.0.width,
                     GestureDetector(
                       onTap: () {
                         Clipboard.setData(
-                            ClipboardData(text: "751001" + controller.noCust));
+                            ClipboardData(text: controller.noVa));
                         _showTopNotification(
                             context, "Nomor Virtual Account berhasil disalin");
                       },

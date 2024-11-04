@@ -173,7 +173,7 @@ class SakuController extends ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      virtualAccountNumber = "751001" + data['data']['user']['nocust'];
+      virtualAccountNumber = data['data']['user']['no_va'];
     }
     notifyListeners();
   }

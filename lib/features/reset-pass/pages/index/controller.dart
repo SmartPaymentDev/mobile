@@ -21,9 +21,9 @@ class ResetPasssController extends ChangeNotifier {
     await fetchUser(authToken);
   }
 
-  Future<void> changePass(BuildContext context, String oldPassword,
+  Future<void> changePass(BuildContext context,
       String newPassword, String confirmPassword) async {
-    if (oldPassword == '' || newPassword == '' || confirmPassword == '') {
+    if (newPassword == '' || confirmPassword == '') {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Semua Field Harus Diisi"),
       ));
@@ -34,6 +34,7 @@ class ResetPasssController extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Password Baru Tidak Sama"),
       ));
+      return;
     }
 
     String? authToken = await storage.read(key: 'authToken');
@@ -47,7 +48,7 @@ class ResetPasssController extends ChangeNotifier {
       final response = await http.post(
         Uri.parse('http://18.141.174.182/change-password'),
         body: json
-            .encode({'no_cust' : noCust ,'old_password': oldPassword, 'new_password': newPassword}),
+            .encode({'no_cust' : noCust , 'new_password': newPassword}),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authToken',

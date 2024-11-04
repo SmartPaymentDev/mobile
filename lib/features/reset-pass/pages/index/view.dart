@@ -25,8 +25,6 @@ class _ResetPassScreenState extends State<ResetPassScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Provider.of<ResetPasssController>(context);
-    final TextEditingController _oldPasswordController =
-        TextEditingController();
     final TextEditingController _newPasswordController =
         TextEditingController();
     final TextEditingController _confirmPasswordController =
@@ -54,11 +52,6 @@ class _ResetPassScreenState extends State<ResetPassScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BaseInput.underlined(
-                labelText: "Password Lama",
-                isPasswordInput: true,
-                controller: _oldPasswordController,
-              ),
               15.0.height,
               BaseInput.underlined(
                 labelText: "Password Baru",
@@ -67,7 +60,7 @@ class _ResetPassScreenState extends State<ResetPassScreen> {
               ),
               15.0.height,
               BaseInput.underlined(
-                labelText: "Konfirmasi Password",
+                labelText: "Konfirmasi Password Baru",
                 isPasswordInput: true,
                 controller: _confirmPasswordController,
               ),
@@ -76,7 +69,6 @@ class _ResetPassScreenState extends State<ResetPassScreen> {
                 text: "Ganti Password",
                 onPressed: () => controller.changePass(
                     context,
-                    _oldPasswordController.text,
                     _newPasswordController.text,
                     _confirmPasswordController.text),
                 width: double.infinity,
