@@ -580,6 +580,30 @@ class TransferBottomSheet extends StatelessWidget {
                             BaseInput.underlined(
                               controller: amountController,
                               labelText: "Nominal",
+                              keyboardType:
+                                  TextInputType.number, 
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  String numericValue =
+                                      value.replaceAll(RegExp(r'[^0-9]'), '');
+
+                                  final format = NumberFormat.currency(
+                                    locale: 'id_ID',
+                                    symbol: 'Rp ',
+                                    decimalDigits: 0,
+                                  );
+
+                                  amountController.value = TextEditingValue(
+                                    text:
+                                        format.format(int.parse(numericValue)),
+                                    selection: TextSelection.collapsed(
+                                      offset: format
+                                          .format(int.parse(numericValue))
+                                          .length,
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                             SizedBox(height: 10),
                             DropdownButtonFormField<String>(

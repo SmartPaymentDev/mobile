@@ -139,6 +139,8 @@ class SakuController extends ChangeNotifier {
       queryParameters: {
         if (fromDate != null) 'from': fromDate,
         if (toDate != null) 'to': toDate,
+        'per_page' : '1000',
+        'page' : '1',
       },
     );
 
