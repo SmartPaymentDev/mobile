@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibnu_abbas/core/preferences/preferences.dart';
+import 'package:intl/intl.dart';
 
 enum InputType { filled, outlined, underlined, cupertino }
 
@@ -27,6 +28,58 @@ class BaseInput extends StatefulWidget {
     this.disabled = false,
     this.onChanged,
   });
+
+  factory BaseInput.currency({
+    Key? key,
+    required String labelText,
+    TextEditingController? controller,
+    bool disabled = false,
+    ValueChanged<String>? onChanged,
+  }) {
+    return BaseInput._(
+      key: key,
+      labelText: labelText,
+      controller: controller,
+      keyboardType: TextInputType.number,
+      disabled: disabled,
+      onChanged: (value) {
+        if (value.isEmpty) {
+          controller?.text = '';
+          if (onChanged != null) onChanged('');
+          return;
+        }
+
+        // Remove all non-digit characters
+        String numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+        // Format the number with Indonesian currency format
+        final formatter = NumberFormat.currency(
+          locale: 'id_ID',
+          symbol: 'Rp',
+          decimalDigits: 0,
+        );
+
+        // Keep original numeric value in controller
+        controller?.text = numericValue;
+
+        // Display formatted value
+        if (onChanged != null) onChanged(numericValue);
+
+        // Update the display value with formatting
+        controller?.value = TextEditingValue(
+          text: formatter.format(int.parse(numericValue)),
+          selection: TextSelection.collapsed(
+            offset: formatter.format(int.parse(numericValue)).length,
+          ),
+        );
+      },
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.all(Dimensions.dp14),
+        labelText: labelText,
+        border: const UnderlineInputBorder(),
+      ),
+    );
+  }
 
   factory BaseInput.filled({
     Key? key,
@@ -167,9 +220,8 @@ class _BaseInputState extends State<BaseInput> {
                     _isObscured = !_isObscured;
                   });
                 },
-                child: Icon(_isObscured
-                    ? Icons.visibility
-                    : Icons.visibility_off),
+                child:
+                    Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
               )
             : null,
         prefix: widget.iconPrefix != null ? Icon(widget.iconPrefix) : null,
@@ -193,9 +245,8 @@ class _BaseInputState extends State<BaseInput> {
         decoration: widget.decoration?.copyWith(
           suffixIcon: widget.isPasswordInput
               ? IconButton(
-                  icon: Icon(_isObscured
-                      ? Icons.visibility
-                      : Icons.visibility_off),
+                  icon: Icon(
+                      _isObscured ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _isObscured = !_isObscured;

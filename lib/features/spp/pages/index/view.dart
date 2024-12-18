@@ -527,6 +527,20 @@ class _HistorySectionState extends State<HistorySection> {
   }
 }
 
+String formatCurrency(dynamic number) {
+  if (number is int) {
+    return NumberFormat().format(number).replaceAll(',', '.');
+  } else if (number is double) {
+    return NumberFormat()
+        .format(number)
+        .replaceAll(',', 'X')
+        .replaceAll('.', ',')
+        .replaceAll('X', '.');
+  } else {
+    return '0';
+  }
+}
+
 class TransferBottomSheet extends StatelessWidget {
   final TextEditingController amountController;
   final TextEditingController destinationController;
@@ -542,6 +556,8 @@ class TransferBottomSheet extends StatelessWidget {
     final controller = Provider.of<SppController>(context);
     final viewInsets = MediaQuery.of(context).viewInsets;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    int amount = 0;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
@@ -580,29 +596,14 @@ class TransferBottomSheet extends StatelessWidget {
                             BaseInput.underlined(
                               controller: amountController,
                               labelText: "Nominal",
-                              keyboardType:
-                                  TextInputType.number, 
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  String numericValue =
-                                      value.replaceAll(RegExp(r'[^0-9]'), '');
-
-                                  final format = NumberFormat.currency(
-                                    locale: 'id_ID',
-                                    symbol: 'Rp ',
-                                    decimalDigits: 0,
-                                  );
-
-                                  amountController.value = TextEditingValue(
-                                    text:
-                                        format.format(int.parse(numericValue)),
-                                    selection: TextSelection.collapsed(
-                                      offset: format
-                                          .format(int.parse(numericValue))
-                                          .length,
-                                    ),
-                                  );
-                                }
+                              onChanged: (newValue) {
+                                String value = newValue
+                                    .replaceAll(',', '')
+                                    .replaceAll('.', '');
+                                int valueNow = int.tryParse(value) ?? 0;
+                                amountController.text =
+                                    formatCurrency(valueNow);
+                                amount = valueNow;
                               },
                             ),
                             SizedBox(height: 10),
@@ -644,7 +645,7 @@ class TransferBottomSheet extends StatelessWidget {
                 onPressed: () async {
                   final success = await controller.transfer(
                     context,
-                    amountController.text,
+                    amount.toString(),
                     destinationController.text,
                   );
                   if (success) {

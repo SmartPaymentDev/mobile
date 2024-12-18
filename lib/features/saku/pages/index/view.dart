@@ -381,6 +381,20 @@ class _HistorySectionState extends State<HistorySection> {
   }
 }
 
+String formatCurrency(dynamic number) {
+  if (number is int) {
+    return NumberFormat().format(number).replaceAll(',', '.');
+  } else if (number is double) {
+    return NumberFormat()
+        .format(number)
+        .replaceAll(',', 'X')
+        .replaceAll('.', ',')
+        .replaceAll('X', '.');
+  } else {
+    return '0';
+  }
+}
+
 class TopUpBottomSheet extends StatelessWidget {
   final TextEditingController amountController;
 
@@ -394,6 +408,8 @@ class TopUpBottomSheet extends StatelessWidget {
     final controller = Provider.of<SakuController>(context);
     final viewInsets = MediaQuery.of(context).viewInsets;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    int amount = 0;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
@@ -417,7 +433,6 @@ class TopUpBottomSheet extends StatelessWidget {
               padding: EdgeInsets.all(20),
               child: BaseText.L("Top Up", fontWeight: FontWeight.w600),
             ),
-
             Flexible(
               child: SingleChildScrollView(
                 child: Padding(
@@ -433,29 +448,15 @@ class TopUpBottomSheet extends StatelessWidget {
                             BaseInput.underlined(
                               controller: amountController,
                               labelText: "Nominal",
-                              keyboardType:
-                                  TextInputType.number, 
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  String numericValue =
-                                      value.replaceAll(RegExp(r'[^0-9]'), '');
-
-                                  final format = NumberFormat.currency(
-                                    locale: 'id_ID',
-                                    symbol: 'Rp ',
-                                    decimalDigits: 0,
-                                  );
-
-                                  amountController.value = TextEditingValue(
-                                    text:
-                                        format.format(int.parse(numericValue)),
-                                    selection: TextSelection.collapsed(
-                                      offset: format
-                                          .format(int.parse(numericValue))
-                                          .length,
-                                    ),
-                                  );
-                                }
+                              keyboardType: TextInputType.number,
+                              onChanged: (newValue) {
+                                String value = newValue
+                                    .replaceAll(',', '')
+                                    .replaceAll('.', '');
+                                int valueNow = int.tryParse(value) ?? 0;
+                                amountController.text =
+                                    formatCurrency(valueNow);
+                                amount = valueNow;
                               },
                             ),
                             20.0.height,
@@ -478,7 +479,6 @@ class TopUpBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: BaseButton.primary(
@@ -487,7 +487,7 @@ class TopUpBottomSheet extends StatelessWidget {
                 onPressed: () async {
                   final success = await controller.topup(
                     context,
-                    amountController.text,
+                    amount.toString(),
                   );
                   if (success) {
                     Navigator.pop(context);
