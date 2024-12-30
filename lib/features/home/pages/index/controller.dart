@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ibnu_abbas/api.dart';
 import 'package:intl/intl.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 class HomeController extends ChangeNotifier {
   final FlutterSecureStorage storage = FlutterSecureStorage();
@@ -17,91 +19,98 @@ class HomeController extends ChangeNotifier {
   Map<String, dynamic> payment = {};
 
   Future<void> fetchData() async {
-    String? authToken = await storage.read(key: 'authToken');
-    await fetchSppBalance(authToken);
-    await fetchSakuBalance(authToken);
-    await fetchBills(authToken);
-    await fetchPayments(authToken);
-    await fetchUser(authToken);
+    String? username = await storage.read(key: 'username');
+    await fetchSppBalance(username);
+    await fetchSakuBalance(username);
+    await fetchBills(username);
+    await fetchPayments(username);
+    await fetchUser();
   }
 
-  Future<void> fetchSppBalance(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/spp/balance'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSppBalance(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'SaldoRequest',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      double saldoValue = data['data']['v_saldo_va']['saldo'].toDouble();
+      String saldoValue = data['SALDO'];
       sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(saldoValue);
+          .format(int.parse(saldoValue));
     } else {
       sppBalance = 'Rp0';
     }
     notifyListeners();
   }
 
-  Future<void> fetchSakuBalance(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/saku/balance'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSakuBalance(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'SaldoRequestSaku',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      double saldoValue =
-          data['data']['v_saldo_va_cashless']['saldo'].toDouble();
+      String saldoValue =
+          data['SALDO'];
       sakuBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(saldoValue);
+          .format(int.parse(saldoValue));
     } else {
       sakuBalance = 'Rp0';
     }
     notifyListeners();
   }
 
-  Future<void> fetchBills(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/bills?paid_st=0'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchBills(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'BillRequest',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      bill = data['data']['bills']?.first ?? {};
+      bill = data['datas']?.first ?? {};
     }
     notifyListeners();
   }
 
-  Future<void> fetchPayments(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/bills?paid_st=1'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchPayments(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'PaymentRequest',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      payment = data['data']['bills']?.first ?? {};
+      payment = data['datas']?.first ?? {};
     }
     notifyListeners();
   }
 
-  Future<void> fetchUser(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/user/me'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      userName = data['data']['user']['nmcust'];
-      noVa = data['data']['user']['no_va'];
-    }
+  Future<void> fetchUser() async {
+    userName = await storage.read(key: 'mahasiswa') ?? '...';
+    noVa = await storage.read(key: 'nova') ?? '...';
     notifyListeners();
   }
 }

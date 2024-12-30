@@ -51,29 +51,27 @@ class PaymentcreenState extends State<PaymentScreen> {
             child: Column(
               children: [
                 ListView.builder(
-                  shrinkWrap: true, // Add this line
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Add this line
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.payments.length,
                   itemBuilder: (context, index) {
                     final payment = controller.payments[index];
 
-                    // Extracting payment details from the bill
                     final paymentDetails =
-                        (payment['v_payment_details'] as List).map((detail) {
+                        (payment['det'] as List).map((detail) {
                       return {
-                        "description": detail['nama_akun'],
-                        "amount": detail['billam'].toString(),
+                        "description": detail['NamaPost'],
+                        "amount": detail['DetailNominal'],
                       };
                     }).toList();
 
                     return BillSection(
-                      paidSt: payment['paidst'],
-                      paiddt: payment['paiddt'],
-                      month: payment['billnm'],
-                      period: payment['bta'],
+                      paidSt: '1',
+                      paiddt: payment['TanggalBayar'],
+                      month: payment['NamaTagihan'],
+                      period: payment['TahunAkademik'],
                       billDetails: paymentDetails,
-                      total: payment['billam'].toString(),
+                      total: payment['TotalNominal'].toString(),
                     );
                   },
                 ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:ibnu_abbas/api.dart';
 import 'dart:convert';
+
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 class PaymentController extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -12,10 +15,9 @@ class PaymentController extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final authToken = await _storage.read(key: 'authToken');
-    print('Auth Token: $authToken'); // Debugging auth token retrieval
+    String? username = await _storage.read(key: 'username');
 
-    if (authToken == null) {
+    if (username == null) {
       print('Auth token is null');
       isLoading = false;
       notifyListeners();
@@ -23,24 +25,25 @@ class PaymentController extends ChangeNotifier {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse('http://18.141.174.182/bills?paid_st=1'),
-        headers: {
-          'Authorization': 'Bearer $authToken',
+      final claimSet = JwtClaim(
+        otherClaims: <String, dynamic>{
+          'USERNAME': username,
+          'METHOD': 'PaymentRequest',
         },
       );
-      print('Status Code: ${response.statusCode}'); // Print status code
-
+      final token = issueJwtHS256(claimSet, keyJwt);
+      final response = await http.get(
+        Uri.parse('$apiBase$token'),
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('Response Data: $data'); // Debugging the response
-        payments = data['data']['bills'] ?? [];
+        payments = data['datas'] ?? {};
       } else {
-        print('Error: ${response.reasonPhrase}'); // Print error if status code is not 200
+        print('Error: ${response.reasonPhrase}'); 
         payments = [];
       }
     } catch (e) {
-      print('Network error: $e'); // Print network error if it occurs
+      print('Network error: $e');
     }
 
     isLoading = false;

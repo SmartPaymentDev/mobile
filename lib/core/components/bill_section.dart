@@ -77,7 +77,7 @@ class BillSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BaseText.M(bill['description'] ?? ''),
-                    BaseText.M(formatCurrency(bill['amount'] ?? '0')),
+                    BaseText.M(bill['amount']),
                   ],
                 ),
               )),

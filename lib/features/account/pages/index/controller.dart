@@ -8,37 +8,33 @@ import 'package:ibnu_abbas/features/auth/pages/login/view.dart';
 class AccountController extends ChangeNotifier {
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  String userName = '...';
-  String noCust = '...';
+  String mahasiswa = '...';
+  String nova = '...';
   String kelas = '...';
   String jenjang = '...';
   String kelompok = '...';
 
   Future<void> fetchData() async {
-    String? authToken = await storage.read(key: 'authToken');
-    await fetchUser(authToken);
+    await fetchUser();
   }
 
-  Future<void> fetchUser(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/user/me'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      userName = data['data']['user']['nmcust'];
-      noCust = data['data']['user']['nocust'];
-      kelas = data['data']['user']['desc_02'];
-      jenjang = data['data']['user']['code_02'];
-      kelompok = data['data']['user']['desc_03'];
-    }
+  Future<void> fetchUser() async {
+    mahasiswa = await storage.read(key: 'mahasiswa') ?? '...';
+    nova = await storage.read(key: 'nova') ?? '...';
+    kelas = await storage.read(key: 'kelas') ?? '...';
+    jenjang = await storage.read(key: 'jenjang') ?? '...';
+    kelompok = await storage.read(key: 'kelompok') ?? '...';
+
     notifyListeners();
   }
 
   Future<void> logout(BuildContext context) async {
-    await storage.delete(key: "authToken");
+    await storage.delete(key: 'mahasiswa');
+    await storage.delete(key: 'nova');
+    await storage.delete(key: 'kelas');
+    await storage.delete(key: 'jenjang');
+    await storage.delete(key: 'kelompok');
+    await storage.delete(key: 'novasaku');
     Navigator.pushNamed(context, AuthLoginScreen.routeName);
   }
 }

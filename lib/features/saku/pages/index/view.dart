@@ -298,9 +298,10 @@ class _HistorySectionState extends State<HistorySection> {
                 itemCount: controller.history.length,
                 itemBuilder: (context, index) {
                   final history = controller.history[index];
-                  double amount = history['debet'] != 0
-                      ? history['debet'].toDouble()
-                      : history['kredit'].toDouble();
+                  final amount =
+                      history['DEBET'] != null && history['DEBET'] != '0'
+                          ? int.parse(history['DEBET']!)
+                          : int.parse(history['KREDIT']!);
                   return Container(
                     width: Dimensions.width(context) / 1.1,
                     padding: EdgeInsets.symmetric(vertical: 15),
@@ -323,17 +324,17 @@ class _HistorySectionState extends State<HistorySection> {
                             Container(
                               padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: history['kredit'] != 0
+                                color: history['KREDIT'] != '0'
                                     ? PreferenceColors.green.shade100
                                     : PreferenceColors.red.shade100,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
-                                history['kredit'] != 0
+                                history['KREDIT'] != '0'
                                     ? Icons.south_east
                                     : Icons.north_west,
                                 size: Dimensions.dp20,
-                                color: history['kredit'] != 0
+                                color: history['KREDIT'] != '0'
                                     ? PreferenceColors.green
                                     : PreferenceColors.red,
                               ),
@@ -341,9 +342,9 @@ class _HistorySectionState extends State<HistorySection> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                BaseText.M(history['metode'],
+                                BaseText.M(history['KETERANGAN'] ?? '',
                                     fontWeight: FontWeight.w600),
-                                BaseText.XS(history['trxdate']),
+                                BaseText.XS(history['TGL'] ?? ''),
                               ],
                             ),
                           ],
@@ -352,17 +353,24 @@ class _HistorySectionState extends State<HistorySection> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             BaseText.M(
-                              (history['kredit'] != 0 ? '+' : '-') +
+                              (history['KREDIT'] != null &&
+                                          history['KREDIT'] != '0'
+                                      ? '+'
+                                      : '-') +
                                   NumberFormat.currency(
                                           locale: 'id_ID', symbol: 'Rp')
                                       .format(amount),
                               fontWeight: FontWeight.w600,
-                              color: history['kredit'] != 0
+                              color: history['KREDIT'] != null &&
+                                      history['KREDIT'] != '0'
                                   ? PreferenceColors.green
                                   : PreferenceColors.red,
                             ),
                             BaseText.XS(
-                              history['kredit'] != 0 ? 'Kredit' : 'Debet',
+                              history['KREDIT'] != null &&
+                                      history['KREDIT'] != '0'
+                                  ? 'Kredit'
+                                  : 'Debet',
                               color: PreferenceColors.black.shade600,
                               fontWeight: FontWeight.w500,
                             ),

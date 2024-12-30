@@ -6,8 +6,8 @@ import 'controller.dart';
 class AuthLoginScreen extends StatelessWidget {
   static const String routeName = '/auth/login';
 
-  final TextEditingController _nocustController = TextEditingController();
-  final TextEditingController _mobilepasswordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +65,12 @@ class AuthLoginScreen extends StatelessWidget {
                             ),
                             30.0.height,
                             BaseInput.cupertino(
-                              controller: _nocustController,
+                              controller: _usernameController,
                               labelText: "Nomor Induk",
                             ),
                             30.0.height,
                             BaseInput.cupertino(
-                              controller: _mobilepasswordController,
+                              controller: _passwordController,
                               labelText: "Password",
                               isPasswordInput: true,
                             ),
@@ -79,8 +79,8 @@ class AuthLoginScreen extends StatelessWidget {
                               onTap: () {
                                 controller.doSignIn(
                                   context,
-                                  _nocustController.text,
-                                  _mobilepasswordController.text,
+                                  _usernameController.text,
+                                  _passwordController.text,
                                 );
                               },
                               child: Container(

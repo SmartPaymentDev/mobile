@@ -3,23 +3,23 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ibnu_abbas/api.dart';
 import 'package:intl/intl.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 class SakuController extends ChangeNotifier {
   final FlutterSecureStorage storage = FlutterSecureStorage();
   String sakuBalance = 'Rp0';
   String sppBalance = 'Rp0';
   List<dynamic> history = [];
-  String virtualAccountNumber = "-";
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
   Future<void> fetchData() async {
-    String? authToken = await storage.read(key: 'authToken');
-    await fetchSakuBalance(authToken);
-    await fetchSppBalance(authToken);
-    await fetchUser(authToken);
+    String? username = await storage.read(key: 'username');
+    await fetchSakuBalance(username);
+    await fetchSppBalance(username);
   }
 
   Future<bool> topup(BuildContext context, String amount) async {
@@ -60,37 +60,44 @@ class SakuController extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchSakuBalance(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/saku/balance'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSakuBalance(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'SaldoRequestSaku',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      double saldoValue =
-          data['data']['v_saldo_va_cashless']['saldo'].toDouble();
+      final saldoValue = data['SALDO'];
       sakuBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(saldoValue);
+          .format(int.parse(saldoValue));
     } else {
       sakuBalance = 'Rp0';
     }
     notifyListeners();
   }
 
-  Future<void> fetchSppBalance(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/spp/balance'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
+  Future<void> fetchSppBalance(String? username) async {
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'METHOD': 'SaldoRequest',
       },
+    );
+    final token = issueJwtHS256(claimSet, keyJwt);
+    final response = await http.get(
+      Uri.parse('$apiBase$token'),
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      double saldoValue = data['data']['v_saldo_va']['saldo'].toDouble();
+      final saldoValue = data['SALDO'];
       sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(saldoValue);
+          .format(int.parse(saldoValue));
     } else {
       sppBalance = 'Rp0';
     }
@@ -130,31 +137,22 @@ class SakuController extends ChangeNotifier {
 
   Future<void> fetchSakuHistory(
       {DateTime? startDate, DateTime? endDate}) async {
-    String? authToken = await storage.read(key: 'authToken');
-
-    final String? fromDate = startDate?.toIso8601String().split('T')[0];
-    final String? toDate = endDate?.toIso8601String().split('T')[0];
-
-    final Uri uri = Uri.parse('http://18.141.174.182/saku').replace(
-      queryParameters: {
-        if (fromDate != null) 'from': fromDate,
-        if (toDate != null) 'to': toDate,
-        'per_page' : '1000',
-        'page' : '1',
-      },
-    );
+    String? username = await storage.read(key: 'username');
 
     try {
-      final response = await http.get(
-        uri,
-        headers: {
-          'Authorization': 'Bearer $authToken',
+      final claimSet = JwtClaim(
+        otherClaims: <String, dynamic>{
+          'USERNAME': username,
+          'METHOD': 'TransaksiRequestSaku'
         },
       );
-
+      final token = issueJwtHS256(claimSet, keyJwt);
+      final response = await http.get(
+        Uri.parse('$apiBase$token'),
+      );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        history = data['data']['transaction_details'] ?? [];
+        history = data['datas'] ?? [];
       } else {
         history = [];
       }
@@ -164,19 +162,5 @@ class SakuController extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
-  }
-
-  Future<void> fetchUser(String? authToken) async {
-    final response = await http.get(
-      Uri.parse('http://18.141.174.182/user/me'),
-      headers: {
-        'Authorization': 'Bearer $authToken',
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      virtualAccountNumber = data['data']['user']['no_va'];
-    }
-    notifyListeners();
   }
 }

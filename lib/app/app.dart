@@ -19,8 +19,12 @@ class App extends StatelessWidget {
   final _storage = const FlutterSecureStorage();
 
   Future<bool> _checkLoginStatus() async {
-    String? token = await _storage.read(key: 'authToken');
-    return token != null;
+    try {
+      final nova = await _storage.read(key: 'nova'); 
+      return nova != null;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
@@ -36,7 +40,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ResetPasssController()),
       ],
       child: MaterialApp(
-        title: 'Nectar',
+        title: 'Ibnu Abbas',
         debugShowCheckedModeBanner: false,
         theme: ThemeLight(PreferenceColors.purple).theme,
         onGenerateRoute: routes,

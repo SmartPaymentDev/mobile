@@ -52,7 +52,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     radius: 30,
                     backgroundColor: PreferenceColors.purple,
                     child: BaseText.L(
-                      controller.userName
+                      controller.mahasiswa
                           .split(' ')
                           .map((word) =>
                               word.isNotEmpty ? word[0].toUpperCase() : '')
@@ -66,7 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BaseText.L(
-                        controller.userName,
+                        controller.mahasiswa,
                         fontWeight: FontWeight.w500,
                       ),
                       1.0.height,
@@ -74,13 +74,13 @@ class _AccountScreenState extends State<AccountScreen> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
                         children: [
-                          BaseText.M(controller.noCust,
+                          BaseText.M(controller.nova,
                               fontWeight: FontWeight.w600),
                           GestureDetector(
                             onTap: () {
                               Clipboard.setData(
                                 ClipboardData(
-                                  text: controller.noCust,
+                                  text: controller.nova,
                                 ),
                               );
                               _showTopNotification(

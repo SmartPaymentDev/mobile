@@ -3,50 +3,80 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:ibnu_abbas/api.dart';
 import 'package:ibnu_abbas/features/main/main.dart';
 import 'package:ibnu_abbas/features/main/pages/index/controller.dart';
 import 'package:provider/provider.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 class AuthLoginController extends ChangeNotifier {
-  final _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
-  Future<void> doSignIn(BuildContext context, String nocust, String mobilepassword) async {
+  static const String errorMessage = "An error occurred. Please try again.";
+  static const String invalidCredentialsMessage = "Invalid login credentials";
+  static const Map<String, String> storageKeys = {
+    'mahasiswa': 'Mahasiswa',
+    'jenjang': 'Jenjang',
+    'kelas': 'Kelas',
+    'kelompok': 'Kelompok',
+    'nova': 'NOVA',
+    'novasaku': 'NOVASAKU',
+  };
+
+  Future<void> doSignIn(
+      BuildContext context, String username, String password) async {
     if (_isLoading) return;
-    _isLoading = true;
-    notifyListeners();
+    _setLoading(true);
+
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'PASSWORD': password,
+        'METHOD': 'LoginRequest',
+      },
+    );
 
     try {
-      final response = await http.post(
-        Uri.parse('http://18.141.174.182/login'),
-        body: json.encode({'nocust': nocust, 'mobilepassword': mobilepassword}),
-        headers: {'Content-Type': 'application/json'},
-      );
-
+      final token = issueJwtHS256(claimSet, keyJwt);
+      final response = await http.get(Uri.parse('$apiBase$token'));
+  
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final token = data['data']['jwt_token'];
-
-        await _storage.write(key: 'authToken', value: token);
-
-        Provider.of<MainScreenController>(context, listen: false)
-            .setSelectedIndex(0);
-        Navigator.pushNamed(context, MainScreen.routeName);
+        if (data['KodeRespon'] != 10) {
+          await _storage.write(key: 'username', value: username);
+          await _storeUserData(data);
+          Provider.of<MainScreenController>(context, listen: false)
+              .setSelectedIndex(0);
+          Navigator.pushNamed(context, MainScreen.routeName);
+        } else {
+          _showSnackBar(context, invalidCredentialsMessage);
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Invalid login credentials"),
-        ));
+        _showSnackBar(context, invalidCredentialsMessage);
       }
     } catch (e) {
-      print("Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("An error occurred. Please try again."),
-      ));
+      debugPrint("Error during login: $e")  ;
+      _showSnackBar(context, errorMessage);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
+  }
+
+  Future<void> _storeUserData(Map<String, dynamic> data) async {
+    for (final entry in storageKeys.entries) {
+      await _storage.write(key: entry.key, value: data[entry.value]);
+    }
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }

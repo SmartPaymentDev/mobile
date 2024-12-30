@@ -47,19 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final controller = Provider.of<HomeController>(context);
     final bill = controller.bill;
     final billDetails = bill.isNotEmpty
-        ? (bill['v_payment_details'] as List).map((detail) {
+        ? (bill['det'] as List).map((detail) {
             return {
-              "description": detail['nama_akun'],
-              "amount": detail['billam'].toString(),
+              "description": detail['NamaPost'],
+              "amount": detail['DetailNominal'],
             };
           }).toList()
         : [];
     final payment = controller.payment;
     final paymentDetail = payment.isNotEmpty
-        ? (bill['v_payment_details'] as List).map((detail) {
+        ? (bill['det'] as List).map((detail) {
             return {
-              "description": detail['nama_akun'],
-              "amount": detail['billam'].toString(),
+              "description": detail['NamaPost'],
+              "amount": detail['DetailNominal'],
             };
           }).toList()
         : [];
@@ -110,12 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     children: [
                       BillSection(
-                        paidSt: bill['paidst'],
-                        paiddt: bill['paiddt'],
-                        month: bill['billnm'],
-                        period: bill['bta'],
+                        paidSt: '0',
+                        paiddt: '',
+                        month: bill['NamaTagihan'],
+                        period: bill['TahunAkademik'],
                         billDetails: billDetails,
-                        total: bill['billam'].toString(),
+                        total: bill['TotalNominal'].toString(),
                       )
                     ],
                   ),
@@ -145,12 +145,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     children: [
                       BillSection(
-                        paidSt: payment['paidst'],
-                        paiddt: payment['paiddt'],
-                        month: payment['billnm'],
-                        period: payment['bta'],
+                        paidSt: '1',
+                        paiddt: payment['TanggalBayar'],
+                        month: payment['NamaTagihan'],
+                        period: payment['TahunAkademik'],
                         billDetails: paymentDetail,
-                        total: payment['billam'].toString(),
+                        total: payment['TotalNominal'].toString(),
                       )
                     ],
                   ),
