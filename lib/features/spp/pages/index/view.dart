@@ -313,7 +313,7 @@ class _HistorySectionState extends State<HistorySection> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<SppController>(context, listen: false)
-          .fetchSppHistory(startDate: _startDate, endDate: _endDate);
+          .fetchSppHistory();
     });
   }
 
@@ -346,7 +346,7 @@ class _HistorySectionState extends State<HistorySection> {
         }
       });
       final controller = Provider.of<SppController>(context, listen: false);
-      controller.fetchSppHistory(startDate: _startDate, endDate: _endDate);
+      controller.fetchSppHistory();
     }
   }
 
@@ -557,14 +557,14 @@ class TransferBottomSheet extends StatelessWidget {
     final viewInsets = MediaQuery.of(context).viewInsets;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    int amount = 0;
+    int amountTransfer = 0;
 
     return Padding(
       padding: EdgeInsets.only(bottom: viewInsets.bottom),
       child: Container(
         constraints: BoxConstraints(
           maxHeight: screenHeight * 0.85,
-          minHeight: screenHeight * 0.45,
+          minHeight: screenHeight * 0.35,
         ),
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -603,29 +603,7 @@ class TransferBottomSheet extends StatelessWidget {
                                 int valueNow = int.tryParse(value) ?? 0;
                                 amountController.text =
                                     formatCurrency(valueNow);
-                                amount = valueNow;
-                              },
-                            ),
-                            SizedBox(height: 10),
-                            DropdownButtonFormField<String>(
-                              decoration: InputDecoration(
-                                labelText: "Tujuan",
-                                contentPadding: const EdgeInsets.all(14),
-                                border: UnderlineInputBorder(),
-                              ),
-                              value: destinationController.text.isEmpty
-                                  ? null
-                                  : destinationController.text,
-                              items: [
-                                DropdownMenuItem<String>(
-                                  value: 'saku',
-                                  child: Text('Kantong Saku'),
-                                ),
-                              ],
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  destinationController.text = newValue;
-                                }
+                                amountTransfer = valueNow;
                               },
                             ),
                           ],
@@ -645,8 +623,7 @@ class TransferBottomSheet extends StatelessWidget {
                 onPressed: () async {
                   final success = await controller.transfer(
                     context,
-                    amount.toString(),
-                    destinationController.text,
+                    amountTransfer.toString(),
                   );
                   if (success) {
                     Navigator.pop(context);

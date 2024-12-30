@@ -23,30 +23,36 @@ class SppController extends ChangeNotifier {
   }
 
   Future<bool> transfer(
-      BuildContext context, String amount, String destination) async {
-    if (amount.isEmpty && destination.isEmpty) {
-      _showTopNotification(context, "Mohon Lengkapi Semua Input.");
+      BuildContext context, String amount) async {
+    if (amount.isEmpty || amount == '0') {
+      _showTopNotification(context, "Nominal Wajib Di Isi.");
       return false;
     }
     if (_isLoading) return false;
     _isLoading = true;
     notifyListeners();
-    String? authToken = await storage.read(key: 'authToken');
+    String? username = await storage.read(key: 'username');
     try {
-      final response = await http.post(
-        Uri.parse('http://18.141.174.182/$destination'),
-        body: json.encode({'amount': int.parse(amount)}),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
+      final claimSet = JwtClaim(
+        otherClaims: <String, dynamic>{
+          'USERNAME': username,
+          'NOMINAL': amount,
+          'METHOD': 'PaymentExeCashless',
         },
       );
+      final token = issueJwtHS256(claimSet, keyJwt);
+      final response = await http.get(
+        Uri.parse('$apiBase$token'),
+      );
+      final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        await fetchData();
-        DateTime _startDate = DateTime.now().subtract(Duration(days: 30));
-        DateTime _endDate = DateTime.now();
-        await fetchSppHistory(startDate: _startDate, endDate: _endDate);
-        return true;
+        if (data[0]['STATUS'] == 'OK') {
+          await fetchData();
+          await fetchSppHistory();
+          return true;
+        }
+        _showTopNotification(context, data[0]['PesanRespon']);
+        return false;
       } else {
         _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
         return false;
@@ -114,7 +120,7 @@ class SppController extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchSppHistory({DateTime? startDate, DateTime? endDate}) async {
+  Future<void> fetchSppHistory() async {
     String? username = await storage.read(key: 'username');
 
     try {
