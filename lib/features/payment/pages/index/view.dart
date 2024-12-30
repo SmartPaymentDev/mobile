@@ -67,6 +67,7 @@ class PaymentcreenState extends State<PaymentScreen> {
 
                     return BillSection(
                       paidSt: '1',
+                      KodeBayar: '',
                       paiddt: payment['TanggalBayar'],
                       month: payment['NamaTagihan'],
                       period: payment['TahunAkademik'],

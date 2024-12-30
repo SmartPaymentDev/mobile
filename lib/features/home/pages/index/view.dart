@@ -112,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       BillSection(
                         paidSt: '0',
                         paiddt: '',
+                        KodeBayar: bill['KodeBayar'],
                         month: bill['NamaTagihan'],
                         period: bill['TahunAkademik'],
                         billDetails: billDetails,
@@ -147,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       BillSection(
                         paidSt: '1',
                         paiddt: payment['TanggalBayar'],
+                        KodeBayar: bill['KodeBayar'],
                         month: payment['NamaTagihan'],
                         period: payment['TahunAkademik'],
                         billDetails: paymentDetail,
@@ -208,13 +210,11 @@ class SppSection extends StatelessWidget {
                 6.0.height,
                 Row(
                   children: [
-                    BaseText.S(controller.noVa,
-                        color: PreferenceColors.white),
+                    BaseText.S(controller.noVa, color: PreferenceColors.white),
                     8.0.width,
                     GestureDetector(
                       onTap: () {
-                        Clipboard.setData(
-                            ClipboardData(text: controller.noVa));
+                        Clipboard.setData(ClipboardData(text: controller.noVa));
                         _showTopNotification(
                             context, "Nomor Virtual Account berhasil disalin");
                       },
@@ -304,13 +304,11 @@ class SakuSection extends StatelessWidget {
                 5.0.height,
                 Row(
                   children: [
-                    BaseText.S(controller.noVa,
-                        color: PreferenceColors.black),
+                    BaseText.S(controller.noVa, color: PreferenceColors.black),
                     8.0.width,
                     GestureDetector(
                       onTap: () {
-                        Clipboard.setData(
-                            ClipboardData(text: controller.noVa));
+                        Clipboard.setData(ClipboardData(text: controller.noVa));
                         _showTopNotification(
                             context, "Nomor Virtual Account berhasil disalin");
                       },

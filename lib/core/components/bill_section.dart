@@ -1,16 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:ibnu_abbas/api.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:ibnu_abbas/core/core.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart'; // Import http package for API call
 
 class BillSection extends StatelessWidget {
   final String month;
   final String period;
   final List<dynamic>? billDetails;
   final String total;
-  final String paidSt;
+  String paidSt;
   final String paiddt;
+  final String KodeBayar;
 
-  const BillSection({
+  BillSection({
     Key? key,
     required this.month,
     required this.period,
@@ -18,6 +25,7 @@ class BillSection extends StatelessWidget {
     required this.total,
     required this.paidSt,
     required this.paiddt,
+    required this.KodeBayar,
   }) : super(key: key);
 
   String formatCurrency(String amount) {
@@ -28,6 +36,83 @@ class BillSection extends StatelessWidget {
     } catch (e) {
       return amount;
     }
+  }
+
+  final FlutterSecureStorage storage = FlutterSecureStorage();
+
+  Future<void> _makePayment(BuildContext context) async {
+    String? username = await storage.read(key: 'username');
+
+    final claimSet = JwtClaim(
+      otherClaims: <String, dynamic>{
+        'USERNAME': username,
+        'KodeBayar': KodeBayar,
+        'METHOD': 'PaymentExe',
+      },
+    );
+
+    try {
+      final token = issueJwtHS256(claimSet, keyJwt);
+      final response = await http.get(
+        Uri.parse('$apiBase$token'),
+      );
+      final data = jsonDecode(response.body);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(child: CircularProgressIndicator());
+        },
+      );
+
+      Navigator.of(context).pop();
+
+      if (response.statusCode == 200) {
+        if (data[0]['STATUS'] == 'OK') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pembayaran berhasil')),
+          );
+          paidSt = '1';
+          Navigator.of(context).pop();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data[0]['PesanRespon'])),
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
+      );
+    }
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text('Apakah Anda yakin ingin membayar tagihan ini?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            BaseButton.primary(
+              text: "Bayar",
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the confirmation dialog
+                await _makePayment(context); // Call API
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -81,7 +166,6 @@ class BillSection extends StatelessWidget {
                   ],
                 ),
               )),
-
           const SizedBox(height: 5),
           Divider(color: PreferenceColors.black.shade100, thickness: 1),
           const SizedBox(height: 5),
@@ -119,10 +203,16 @@ class BillSection extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     )
                   ],
+                ),
+              ],
+              if (paidSt == '0') ...[
+                BaseButton.primary(
+                  text: "Bayar",
+                  onPressed: () => _showConfirmationDialog(context),
                 )
-              ]
+              ],
             ],
-          )
+          ),
         ],
       ),
     );
