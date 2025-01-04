@@ -48,12 +48,13 @@ class SakuController extends ChangeNotifier {
         if (data[0]['STATUS'] == 'OK') {
           await fetchData();
           await fetchSakuHistory();
+          _showTopNotification(context, "Berhasil");
           return true;
         }
         _showTopNotification(context, data[0]['PesanRespon']);
         return false;
       } else {
-        _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
+        _showTopNotification(context, "Top Up Gagal, Harap Coba Lagi Nanti");
         return false;
       }
     } catch (e) {
@@ -79,9 +80,15 @@ class SakuController extends ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final saldoValue = data['SALDO'];
-      sakuBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(int.parse(saldoValue));
+      if (data != null && data['SALDO'] != null) {
+        String saldoValue = data['SALDO'].toString();
+        if (int.tryParse(saldoValue) != null) {
+          sakuBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
+              .format(int.parse(saldoValue));
+          notifyListeners();
+          return;
+        }
+      }
     } else {
       sakuBalance = 'Rp0';
     }
@@ -101,9 +108,15 @@ class SakuController extends ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final saldoValue = data['SALDO'];
-      sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(int.parse(saldoValue));
+      if (data != null && data['SALDO'] != null) {
+        String saldoValue = data['SALDO'].toString();
+        if (int.tryParse(saldoValue) != null) {
+          sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
+              .format(int.parse(saldoValue));
+          notifyListeners();
+          return;
+        }
+      }
     } else {
       sppBalance = 'Rp0';
     }
@@ -158,7 +171,19 @@ class SakuController extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        history = data['datas'] ?? [];
+        var filteredHistory = (data['datas'] ?? []).reversed.toList();
+
+        // Apply date filtering if dates are provided
+        if (startDate != null && endDate != null) {
+          filteredHistory = filteredHistory.where((item) {
+            DateTime transactionDate = DateTime.parse(item['TGL']);
+            return transactionDate
+                    .isAfter(startDate.subtract(Duration(days: 1))) &&
+                transactionDate.isBefore(endDate.add(Duration(days: 1)));
+          }).toList();
+        }
+
+        history = filteredHistory;
       } else {
         history = [];
       }

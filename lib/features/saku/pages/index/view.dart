@@ -284,103 +284,114 @@ class _HistorySectionState extends State<HistorySection> {
             child: Container(
               width: Dimensions.width(context) / 1.1,
               padding: EdgeInsets.symmetric(vertical: 15),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: PreferenceColors.white.shade600,
-                    width: 1.0,
-                  ),
-                ),
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.history.length,
-                itemBuilder: (context, index) {
-                  final history = controller.history[index];
-                  final amount =
-                      history['DEBET'] != null && history['DEBET'] != '0'
-                          ? int.parse(history['DEBET']!)
-                          : int.parse(history['KREDIT']!);
-                  return Container(
-                    width: Dimensions.width(context) / 1.1,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: PreferenceColors.white.shade600,
-                          width: 1.0,
-                        ),
+              child: controller.history.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.history,
+                            size: 48,
+                            color: PreferenceColors.black.shade300,
+                          ),
+                          10.0.height,
+                          BaseText.M(
+                            "Belum ada riwayat transaksi",
+                            color: PreferenceColors.black.shade600,
+                          ),
+                        ],
                       ),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 15,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: history['KREDIT'] != '0'
-                                    ? PreferenceColors.green.shade100
-                                    : PreferenceColors.red.shade100,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                history['KREDIT'] != '0'
-                                    ? Icons.south_east
-                                    : Icons.north_west,
-                                size: Dimensions.dp20,
-                                color: history['KREDIT'] != '0'
-                                    ? PreferenceColors.green
-                                    : PreferenceColors.red,
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.history.length,
+                      itemBuilder: (context, index) {
+                        final history = controller.history[index];
+                        final amount =
+                            history['DEBET'] != null && history['DEBET'] != '0'
+                                ? int.parse(history['DEBET']!)
+                                : int.parse(history['KREDIT']!);
+                        return Container(
+                          width: Dimensions.width(context) / 1.1,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: PreferenceColors.white.shade600,
+                                width: 1.0,
                               ),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BaseText.M(history['KETERANGAN'] ?? '',
-                                    fontWeight: FontWeight.w600),
-                                BaseText.XS(history['TGL'] ?? ''),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            BaseText.M(
-                              (history['KREDIT'] != null &&
-                                          history['KREDIT'] != '0'
-                                      ? '+'
-                                      : '-') +
-                                  NumberFormat.currency(
-                                          locale: 'id_ID', symbol: 'Rp')
-                                      .format(amount),
-                              fontWeight: FontWeight.w600,
-                              color: history['KREDIT'] != null &&
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 15,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: history['KREDIT'] != '0'
+                                          ? PreferenceColors.green.shade100
+                                          : PreferenceColors.red.shade100,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
                                       history['KREDIT'] != '0'
-                                  ? PreferenceColors.green
-                                  : PreferenceColors.red,
-                            ),
-                            BaseText.XS(
-                              history['KREDIT'] != null &&
-                                      history['KREDIT'] != '0'
-                                  ? 'Kredit'
-                                  : 'Debet',
-                              color: PreferenceColors.black.shade600,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        )
-                      ],
+                                          ? Icons.south_east
+                                          : Icons.north_west,
+                                      size: Dimensions.dp20,
+                                      color: history['KREDIT'] != '0'
+                                          ? PreferenceColors.green
+                                          : PreferenceColors.red,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      BaseText.M(history['KETERANGAN'] ?? '',
+                                          fontWeight: FontWeight.w600),
+                                      BaseText.XS(history['TGL'] ?? ''),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  BaseText.M(
+                                    (history['KREDIT'] != null &&
+                                                history['KREDIT'] != '0'
+                                            ? '+'
+                                            : '-') +
+                                        NumberFormat.currency(
+                                                locale: 'id_ID', symbol: 'Rp')
+                                            .format(amount),
+                                    fontWeight: FontWeight.w600,
+                                    color: history['KREDIT'] != null &&
+                                            history['KREDIT'] != '0'
+                                        ? PreferenceColors.green
+                                        : PreferenceColors.red,
+                                  ),
+                                  BaseText.XS(
+                                    history['KREDIT'] != null &&
+                                            history['KREDIT'] != '0'
+                                        ? 'Kredit'
+                                        : 'Debet',
+                                    color: PreferenceColors.black.shade600,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ),
         )

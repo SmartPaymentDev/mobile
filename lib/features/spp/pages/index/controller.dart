@@ -48,9 +48,10 @@ class SppController extends ChangeNotifier {
         if (data[0]['STATUS'] == 'OK') {
           await fetchData();
           await fetchSppHistory();
+          _showTopNotification(context, "Berhasil");
           return true;
         }
-        _showTopNotification(context, "Berhasil");
+        _showTopNotification(context, data[0]['PesanRespon']);
         return false;
       } else {
         _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
@@ -79,9 +80,15 @@ class SppController extends ChangeNotifier {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final saldoValue = data['SALDO'];
-      sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
-          .format(int.parse(saldoValue));
+      if (data != null && data['SALDO'] != null) {
+        String saldoValue = data['SALDO'].toString();
+        if (int.tryParse(saldoValue) != null) {
+          sppBalance = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp')
+              .format(int.parse(saldoValue));
+          notifyListeners();
+          return;
+        }
+      }
     } else {
       sppBalance = 'Rp0';
     }
