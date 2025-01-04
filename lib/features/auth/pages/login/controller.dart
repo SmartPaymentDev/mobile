@@ -15,8 +15,8 @@ class AuthLoginController extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  static const String errorMessage = "An error occurred. Please try again.";
-  static const String invalidCredentialsMessage = "Invalid login credentials";
+  static const String errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
+  static const String invalidCredentialsMessage = "Nomor Induk Atau Password Salah";
   static const Map<String, String> storageKeys = {
     'mahasiswa': 'Mahasiswa',
     'jenjang': 'Jenjang',
@@ -55,7 +55,7 @@ class AuthLoginController extends ChangeNotifier {
           _showSnackBar(context, invalidCredentialsMessage);
         }
       } else {
-        _showSnackBar(context, invalidCredentialsMessage);
+        _showSnackBar(context, errorMessage);
       }
     } catch (e) {
       debugPrint("Error during login: $e")  ;

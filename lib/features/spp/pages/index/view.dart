@@ -80,7 +80,7 @@ class _SppScreenState extends State<SppScreen> {
                               isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return FractionallySizedBox(
-                                  heightFactor: 0.65,
+                                  heightFactor: 0.6,
                                   child: Container(
                                     width: Dimensions.width(context),
                                     decoration: BoxDecoration(
@@ -270,7 +270,7 @@ class _SppScreenState extends State<SppScreen> {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        top: 40,
+        top: 0,
         left: 0,
         right: 0,
         child: Material(
@@ -312,8 +312,7 @@ class _HistorySectionState extends State<HistorySection> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<SppController>(context, listen: false)
-          .fetchSppHistory();
+      Provider.of<SppController>(context, listen: false).fetchSppHistory();
     });
   }
 
@@ -346,7 +345,10 @@ class _HistorySectionState extends State<HistorySection> {
         }
       });
       final controller = Provider.of<SppController>(context, listen: false);
-      controller.fetchSppHistory();
+      controller.fetchSppHistory(
+        startDate: _startDate,
+        endDate: _endDate,
+      );
     }
   }
 
@@ -430,14 +432,6 @@ class _HistorySectionState extends State<HistorySection> {
             child: Container(
               width: Dimensions.width(context) / 1.1,
               padding: EdgeInsets.symmetric(vertical: 15),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: PreferenceColors.white.shade600,
-                    width: 1.0,
-                  ),
-                ),
-              ),
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

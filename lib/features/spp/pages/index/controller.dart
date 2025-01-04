@@ -22,8 +22,7 @@ class SppController extends ChangeNotifier {
     await fetchUser();
   }
 
-  Future<bool> transfer(
-      BuildContext context, String amount) async {
+  Future<bool> transfer(BuildContext context, String amount) async {
     if (amount.isEmpty || amount == '0') {
       _showTopNotification(context, "Nominal Wajib Di Isi.");
       return false;
@@ -120,7 +119,7 @@ class SppController extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchSppHistory() async {
+  Future<void> fetchSppHistory({DateTime? startDate, DateTime? endDate}) async {
     String? username = await storage.read(key: 'username');
 
     try {
@@ -136,7 +135,19 @@ class SppController extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        history = data['datas'] ?? [];
+        var filteredHistory = (data['datas'] ?? []).reversed.toList();
+
+        // Apply date filtering if dates are provided
+        if (startDate != null && endDate != null) {
+          filteredHistory = filteredHistory.where((item) {
+            DateTime transactionDate = DateTime.parse(item['TGL']);
+            return transactionDate
+                    .isAfter(startDate.subtract(Duration(days: 1))) &&
+                transactionDate.isBefore(endDate.add(Duration(days: 1)));
+          }).toList();
+        }
+
+        history = filteredHistory;
       } else {
         history = [];
       }
