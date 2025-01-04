@@ -50,7 +50,7 @@ class SppController extends ChangeNotifier {
           await fetchSppHistory();
           return true;
         }
-        _showTopNotification(context, data[0]['PesanRespon']);
+        _showTopNotification(context, "Berhasil");
         return false;
       } else {
         _showTopNotification(context, "Transfer Gagal, Harap Coba Lagi Nanti");
